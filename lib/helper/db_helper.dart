@@ -37,6 +37,12 @@ class DBHelper {
     ''');
   }
 
+  Future<List<ReportModel>> getAllReports() async {
+    final db = await instance.database;
+    final result = await db.query('reports', orderBy: 'id DESC');
+    return result.map((json) => ReportModel.fromMap(json)).toList();
+  }
+
   Future<int> insertReport(ReportModel report) async {
     final db = await instance.database;
     return await db.insert('reports', report.toMap());
