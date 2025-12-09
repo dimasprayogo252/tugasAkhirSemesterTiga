@@ -39,6 +39,7 @@ class DashboardScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
+            // Menggunakan ReportListView (ConsumerWidget)
             const ReportListView(),
           ],
         ),
@@ -47,7 +48,6 @@ class DashboardScreen extends StatelessWidget {
   }
 
   Widget _buildStatCards() {
-    // Stat Card ini menggunakan data dummy. Anda mungkin ingin menghubungkannya ke provider statistik di masa depan.
     return const Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
@@ -61,7 +61,6 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
-// Widget _StatCard tetap sama
 class _StatCard extends StatelessWidget {
   final String title;
   final String value;
@@ -96,7 +95,7 @@ class _StatCard extends StatelessWidget {
 }
 
 // =========================================================
-// PERBAIKAN PENTING DI REPORT LIST VIEW
+// ReportListView
 // =========================================================
 
 class ReportListView extends ConsumerWidget {
@@ -104,7 +103,7 @@ class ReportListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 1. Tipe Model Diperbaiki dari Report menjadi ReportModel
+    // Watch reportListProvider
     final List<ReportModel> reports = ref.watch(reportListProvider);
 
     if (reports.isEmpty) {
@@ -117,6 +116,7 @@ class ReportListView extends ConsumerWidget {
     }
 
     return ListView.builder(
+      // Penting: shrinkWrap dan NeverScrollableScrollPhysics diperlukan karena berada di dalam SingleChildScrollView
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: reports.length,
@@ -125,21 +125,23 @@ class ReportListView extends ConsumerWidget {
         return ListTile(
           leading: const Icon(Icons.file_present, color: Colors.indigo),
           title: Text(report.title, style: const TextStyle(fontWeight: FontWeight.w500)),
-
-          // 2. Menggunakan properti 'description' (atau properti lain yang ada)
           subtitle: Text(report.description),
-
-          // 2. Jika model Anda memiliki 'createdAt' atau properti waktu lain:
-          // Jika model tidak memiliki 'date', ganti dengan data dummy atau properti yang ada.
-          trailing: Text('ID: ${report.id}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          // Menampilkan ID (asumsi ID adalah int?)
+          trailing: Text(report.id != null ? 'ID: ${report.id}' : 'ID: N/A', style: const TextStyle(fontSize: 12, color: Colors.grey)),
 
           onTap: () {
-            // 3. Menambahkan Navigasi ke DetailScreen
+            // ✅ KETAHANAN: Periksa null sebelum menggunakan ID
+            if (report.id == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Laporan tidak lengkap (ID hilang).')),
+              );
+              return;
+            }
+
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => ReportDetailScreen(
-                  // Asumsi ReportDetailScreen menerima reportId
-                  reportId: report.id!,
+                  reportId: report.id!, // ID dipastikan ada di sini
                 ),
               ),
             );
