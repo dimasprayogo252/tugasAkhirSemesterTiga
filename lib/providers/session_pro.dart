@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:projek_one/models/report_model.dart';
 
 class SessionNotifier extends StateNotifier<bool> {
   SessionNotifier() : super(false) {
@@ -38,3 +39,18 @@ class SessionNotifier extends StateNotifier<bool> {
 
 final sessionProvider =
 StateNotifierProvider<SessionNotifier, bool>((ref) => SessionNotifier());
+
+class ReportListNotifier extends StateNotifier<List<ReportModel>> {
+  ReportListNotifier() : super([]);
+
+  //Insert
+  Future<void> addReport(ReportModel newReport) async {
+    await Future.delayed(const Duration(seconds: 1));
+    state = [...state, newReport];
+    print('Laporan berhasil disimpan: ${newReport.title}');
+  }
+}
+
+final reportListProvider = StateNotifierProvider<ReportListNotifier, List<ReportModel>>((ref) {
+  return ReportListNotifier();
+});

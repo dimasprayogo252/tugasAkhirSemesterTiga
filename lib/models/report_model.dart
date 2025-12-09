@@ -5,7 +5,7 @@ class ReportModel {
   String imagePath;
   double latitude;
   double longitude;
-  String date;
+  DateTime date;
 
   ReportModel({
     this.id,
@@ -26,6 +26,8 @@ class ReportModel {
     longitude: map['longitude'],
     date: map['date'],
   );
+
+
 
   Map<String, dynamic> toMap() => {
     'id': id,
