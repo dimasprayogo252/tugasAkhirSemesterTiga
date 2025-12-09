@@ -48,8 +48,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ElevatedButton(
                 onPressed: () async {
                   bool success = await ref.read(sessionProvider.notifier).login(
-                    emailController.text,
-                    passController.text,
+                    emailController.text.trim(),
+                    passController.text.trim(),
                   );
 
                   if (success) {

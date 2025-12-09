@@ -23,8 +23,10 @@ class SessionNotifier extends StateNotifier<bool> {
     if (email == savedEmail && password == savedPass) {
       await prefs.setBool('isLoggedIn', true);
       state = true;
+      return true;
+    } else {
+      return false;
     }
-    return success;
   }
 
   Future<void> register(String email, String password) async {
