@@ -26,7 +26,13 @@ class DBHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
         description TEXT NOT NULL,
-        date TEXT NOT NULL
+        imagePath TEXT,
+        latitude DOUBLE NOT NULL,
+        longitude DOUBLE NOT  NULL,
+        status TEXT NOT NULL,
+        date TEXT NOT NULL,
+        officerNote TEXT,
+        completionPhotoPath TEXT
       )
     ''');
   }
@@ -34,6 +40,28 @@ class DBHelper {
   Future<int> insertReport(ReportModel report) async {
     final db = await instance.database;
     return await db.insert('reports', report.toMap());
+  }
+  Future<List<ReportModel>> getReports() async {
+    final db = await instance.database;
+    final result = await db.query('reports', orderBy: 'id DESC');
+    return result.map((json) => ReportModel.fromMap(json)).toList();
+  }
+  Future<int> updateReport(ReportModel report) async {
+    final db = await instance.database;
+    return await db.update(
+      'reports',
+      report.toMap(),
+      where: 'id = ?',
+      whereArgs: [report.id],
+    );
+  }
+  Future<int> deleteReport(int id) async {
+    final db = await instance.database;
+    return await db.delete(
+      'reports',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   Future close() async {
