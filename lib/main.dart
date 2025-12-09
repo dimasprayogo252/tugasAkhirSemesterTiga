@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'auth/login.dart';
-import 'homescreen.dart';
+import 'screens/homescreen.dart';
 import 'providers/session_pro.dart';
 
 void main() {
