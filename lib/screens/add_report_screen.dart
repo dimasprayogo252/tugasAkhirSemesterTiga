@@ -102,6 +102,7 @@ class _AddReportScreenState extends ConsumerState<AddReportScreen> {
       imagePath: _pickedImage!.path,
       latitude: _latitude!,
       longitude: _longitude!,
+      status: 'Pending',
       date: _date!,
     );
 
