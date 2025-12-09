@@ -12,16 +12,19 @@ class SessionNotifier extends StateNotifier<bool> {
     state = prefs.getBool('isLoggedIn') ?? false;
   }
 
-  Future<void> login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     final prefs = await SharedPreferences.getInstance();
 
     String? savedEmail = prefs.getString('email');
     String? savedPass = prefs.getString('password');
 
+    bool success = false;
+
     if (email == savedEmail && password == savedPass) {
       await prefs.setBool('isLoggedIn', true);
       state = true;
     }
+    return success;
   }
 
   Future<void> register(String email, String password) async {

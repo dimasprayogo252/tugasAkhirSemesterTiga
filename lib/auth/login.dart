@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/session_pro.dart';
 import '../auth/register.dart';
+import '../screens/homescreen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -13,8 +14,6 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final emailController = TextEditingController();
   final passController = TextEditingController();
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -32,25 +31,41 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             children: [
               const Text("Login", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
+
               TextField(
                 controller: emailController,
                 decoration: const InputDecoration(labelText: "Email"),
               ),
+
               TextField(
                 controller: passController,
                 obscureText: true,
                 decoration: const InputDecoration(labelText: "Password"),
               ),
+
               const SizedBox(height: 20),
+
               ElevatedButton(
-                onPressed: () {
-                  ref.read(sessionProvider.notifier).login(
+                onPressed: () async {
+                  bool success = await ref.read(sessionProvider.notifier).login(
                     emailController.text.trim(),
                     passController.text.trim(),
                   );
+
+                  if (success) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HomeScreen()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Login gagal!")),
+                    );
+                  }
                 },
                 child: const Text("LOGIN"),
               ),
+
               TextButton(
                 onPressed: () {
                   Navigator.push(
