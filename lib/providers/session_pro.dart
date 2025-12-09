@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:projek_one/helper/db_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:projek_one/models/report_model.dart';
 
@@ -49,7 +50,9 @@ class ReportListNotifier extends StateNotifier<List<ReportModel>> {
   ReportListNotifier() : super([]);
 
   //Insert
-  Future<void> addReport(ReportModel newReport) async {
+  Future<void> addReport(ReportModel report) async {
+    final id = await DBHelper.instance.insertReport(report);
+    final newReport = report.copyWith(id: id);
     await Future.delayed(const Duration(seconds: 1));
     state = [...state, newReport];
     print('Laporan berhasil disimpan: ${newReport.title}');

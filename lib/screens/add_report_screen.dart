@@ -103,7 +103,7 @@ class _AddReportScreenState extends ConsumerState<AddReportScreen> {
       latitude: _latitude!,
       longitude: _longitude!,
       status: 'Pending',
-      date: _date!,
+      date: DateTime.now(),
     );
 
 
