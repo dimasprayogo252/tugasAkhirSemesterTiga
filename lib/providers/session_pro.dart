@@ -43,6 +43,8 @@ class SessionNotifier extends StateNotifier<bool> {
   }
 }
 
+
+
 final sessionProvider =
 StateNotifierProvider<SessionNotifier, bool>((ref) => SessionNotifier());
 

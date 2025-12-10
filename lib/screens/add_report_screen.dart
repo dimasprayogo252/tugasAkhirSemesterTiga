@@ -97,6 +97,7 @@ class _AddReportScreenState extends ConsumerState<AddReportScreen> {
 
 
     final newReport = ReportModel(
+      id: DateTime.now().millisecondsSinceEpoch,
       title: _titleController.text,
       description: _descriptionController.text,
       imagePath: _pickedImage!.path,

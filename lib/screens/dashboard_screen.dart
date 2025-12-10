@@ -47,7 +47,6 @@ class DashboardScreen extends StatelessWidget {
   }
 
   Widget _buildStatCards() {
-    // Stat Card ini menggunakan data dummy. Anda mungkin ingin menghubungkannya ke provider statistik di masa depan.
     return const Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
@@ -61,7 +60,6 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
-// Widget _StatCard tetap sama
 class _StatCard extends StatelessWidget {
   final String title;
   final String value;
@@ -94,17 +92,11 @@ class _StatCard extends StatelessWidget {
     );
   }
 }
-
-// =========================================================
-// PERBAIKAN PENTING DI REPORT LIST VIEW
-// =========================================================
-
 class ReportListView extends ConsumerWidget {
   const ReportListView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 1. Tipe Model Diperbaiki dari Report menjadi ReportModel
     final List<ReportModel> reports = ref.watch(reportListProvider);
 
     if (reports.isEmpty) {
@@ -125,20 +117,13 @@ class ReportListView extends ConsumerWidget {
         return ListTile(
           leading: const Icon(Icons.file_present, color: Colors.indigo),
           title: Text(report.title, style: const TextStyle(fontWeight: FontWeight.w500)),
-
-          // 2. Menggunakan properti 'description' (atau properti lain yang ada)
           subtitle: Text(report.description),
-
-          // 2. Jika model Anda memiliki 'createdAt' atau properti waktu lain:
-          // Jika model tidak memiliki 'date', ganti dengan data dummy atau properti yang ada.
           trailing: Text('ID: ${report.id}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
 
           onTap: () {
-            // 3. Menambahkan Navigasi ke DetailScreen
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => ReportDetailScreen(
-                  // Asumsi ReportDetailScreen menerima reportId
                   reportId: report.id!,
                 ),
               ),
