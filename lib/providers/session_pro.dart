@@ -43,15 +43,19 @@ class SessionNotifier extends StateNotifier<bool> {
   }
 }
 
-
-
 final sessionProvider =
 StateNotifierProvider<SessionNotifier, bool>((ref) => SessionNotifier());
 
 class ReportListNotifier extends StateNotifier<List<ReportModel>> {
-  ReportListNotifier() : super([]);
+  ReportListNotifier() : super([]) {
+    _loadInitialReports();
+  }
 
-  //Insert
+  Future<void> _loadInitialReports() async {
+    final reports = await DBHelper.instance.getAllReports();
+    state = reports;
+  }
+
   Future<void> addReport(ReportModel report) async {
     final id = await DBHelper.instance.insertReport(report);
     final newReport = report.copyWith(id: id);
@@ -62,7 +66,6 @@ class ReportListNotifier extends StateNotifier<List<ReportModel>> {
 
   Future<void> deleteReport(int reportId) async {
     await DBHelper.instance.deleteReport(reportId);
-
     state = state.where((r) => r.id != reportId).toList();
     print('Laporan ID $reportId berhasil dihapus dari DB dan State.');
   }
