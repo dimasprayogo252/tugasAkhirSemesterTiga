@@ -8,9 +8,9 @@ class ReportModel {
   double longitude;
   String status;
   DateTime date;
-
   String? officerNote;
   String? completionPhotoPath;
+  bool? isCompleted;
 
   ReportModel({
     this.id,
