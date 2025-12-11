@@ -59,6 +59,13 @@ class ReportListNotifier extends StateNotifier<List<ReportModel>> {
     state = [...state, newReport];
     print('Laporan berhasil disimpan: ${newReport.title}');
   }
+
+  Future<void> deleteReport(int reportId) async {
+    await DBHelper.instance.deleteReport(reportId);
+
+    state = state.where((r) => r.id != reportId).toList();
+    print('Laporan ID $reportId berhasil dihapus dari DB dan State.');
+  }
 }
 
 final reportListProvider = StateNotifierProvider<ReportListNotifier, List<ReportModel>>((ref) {
