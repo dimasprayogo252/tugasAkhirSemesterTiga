@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:projek_one/providers/session_pro.dart';
 import 'package:projek_one/screens/detail_report_screen.dart';
 import 'add_report_screen.dart';
+import 'package:projek_one/auth/login.dart';
 
 
 class HomeScreen extends ConsumerWidget {
@@ -16,6 +17,21 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Daftar Laporan (The Reporter)'),
         backgroundColor: Colors.blueAccent,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await ref.read(sessionProvider.notifier).logout();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const LoginScreen(),
+                ),
+                    (route) => false,
+              );
+            },
+          ),
+        ],
       ),
       body: reports.isEmpty?
       const Center(
