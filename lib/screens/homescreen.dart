@@ -52,7 +52,7 @@ class HomeScreen extends ConsumerWidget {
 
 
           return Dismissible(
-            key: UniqueKey(),
+            key: ValueKey(report.id),
 
             background: Container(
               color: Colors.red,
@@ -62,9 +62,15 @@ class HomeScreen extends ConsumerWidget {
             ),
 
             direction: DismissDirection.endToStart,
+            onDismissed: (_) async {
+              await ref
+                  .read(reportListProvider.notifier)
+                  .deleteReport(report.id!);
 
-
-
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Laporan dihapus')),
+              );
+            },
             child: Card(
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: ListTile(
