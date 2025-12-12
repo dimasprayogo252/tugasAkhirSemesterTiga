@@ -17,18 +17,9 @@ class DBHelper {
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-
-    return await openDatabase(
-      path,
-      version: 2, // UPGRADE versi database
-      onCreate: _createDB,
-      onUpgrade: _upgradeDB,
-    );
+    return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
-  // -------------------------------------------------------------------------
-  //  CREATE TABLE — struktur terbaru (SESUAI model)
-  // -------------------------------------------------------------------------
   Future _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE reports (
@@ -36,46 +27,37 @@ class DBHelper {
         title TEXT NOT NULL,
         description TEXT NOT NULL,
         imagePath TEXT,
-        latitude REAL NOT NULL,
-        longitude REAL NOT NULL,
+        latitude DOUBLE NOT NULL,
+        longitude DOUBLE NOT NULL,
         status TEXT NOT NULL,
         date TEXT NOT NULL,
         officerNote TEXT,
-        completionPhotoPath TEXT,
-        isCompleted INTEGER DEFAULT 0
+        completionPhotoPath TEXT
       )
     ''');
   }
 
-  // -------------------------------------------------------------------------
-  //  UPGRADE DATABASE — agar perubahan struktur tidak perlu hapus DB
-  // -------------------------------------------------------------------------
-  Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
-      await db.execute("ALTER TABLE reports ADD COLUMN isCompleted INTEGER DEFAULT 0");
-    }
-  }
-
-  // -------------------------------------------------------------------------
-  //  GET ALL REPORTS
-  // -------------------------------------------------------------------------
+  //-----------------------------------------------------------
+  //   GET ALL REPORTS → RETURN LIST<ReportModel>
+  //-----------------------------------------------------------
   Future<List<ReportModel>> getAllReports() async {
     final db = await instance.database;
     final result = await db.query('reports', orderBy: 'id DESC');
+
     return result.map((json) => ReportModel.fromMap(json)).toList();
   }
 
-  // -------------------------------------------------------------------------
-  //  INSERT
-  // -------------------------------------------------------------------------
+  //-----------------------------------------------------------
+  //   INSERT
+  //-----------------------------------------------------------
   Future<int> insertReport(ReportModel report) async {
     final db = await instance.database;
     return await db.insert('reports', report.toMap());
   }
 
-  // -------------------------------------------------------------------------
-  //  UPDATE
-  // -------------------------------------------------------------------------
+  //-----------------------------------------------------------
+  //   UPDATE
+  //-----------------------------------------------------------
   Future<int> updateReport(ReportModel report) async {
     final db = await instance.database;
     return await db.update(
@@ -86,6 +68,9 @@ class DBHelper {
     );
   }
 
+  //-----------------------------------------------------------
+  //   DELETE
+  //-----------------------------------------------------------
   Future<int> deleteReport(int id) async {
     final db = await instance.database;
     return await db.delete(
@@ -95,3 +80,8 @@ class DBHelper {
     );
   }
 
+  Future close() async {
+    final db = await instance.database;
+    db.close();
+  }
+}
