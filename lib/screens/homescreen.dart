@@ -52,7 +52,7 @@ class HomeScreen extends ConsumerWidget {
 
 
           return Dismissible(
-            key: ValueKey(report.id),
+            key: ValueKey(report.id ?? index),
 
             background: Container(
               color: Colors.red,
@@ -63,14 +63,20 @@ class HomeScreen extends ConsumerWidget {
 
             direction: DismissDirection.endToStart,
             onDismissed: (_) async {
-              await ref
-                  .read(reportListProvider.notifier)
-                  .deleteReport(report.id!);
+              if (report.id == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Gagal hapus: ID laporan null')),
+                );
+                return;
+              }
+
+              await ref.read(reportListProvider.notifier).deleteReport(report.id!);
 
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Laporan dihapus')),
               );
             },
+
             child: Card(
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: ListTile(
@@ -87,13 +93,20 @@ class HomeScreen extends ConsumerWidget {
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
 
                 onTap: () {
+                  if (report.id == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Tidak bisa dibuka: ID laporan belum ada')),
+                    );
+                    return;
+                  }
+
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => ReportDetailScreen(
-                        reportId: report.id!,)
+                      builder: (_) => ReportDetailScreen(reportId: report.id!),
                     ),
                   );
                 },
+
               ),
             ),
           );
