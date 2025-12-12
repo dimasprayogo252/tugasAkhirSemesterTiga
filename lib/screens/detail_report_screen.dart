@@ -13,7 +13,28 @@ class ReportDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final reports = ref.watch(reportListProvider);
-    final report = reports.firstWhere((r) => r.id == reportId);
+
+    ReportModel? report;
+    try {
+      report = reports.firstWhere((r) => r.id == reportId);
+    } catch (e) {
+      report = null;
+    }
+
+    if (report == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Laporan tidak ditemukan atau telah dihapus.")),
+          );
+        }
+      });
+      return Scaffold(
+        body: const Center(child: CircularProgressIndicator()),
+        appBar: AppBar(title: const Text('Loading...')),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -80,7 +101,6 @@ class ReportDetailScreen extends ConsumerWidget {
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
           ),
 
-        // 2. Tombol Hapus
         ElevatedButton.icon(
           onPressed: () => _showDeleteConfirmation(context, report, ref),
           icon: const Icon(Icons.delete),

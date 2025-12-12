@@ -5,11 +5,20 @@ import '/models/report_model.dart';
 import 'detail_report_screen.dart';
 
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final reports = ref.watch(reportListProvider);
+
+    // Cek Status Loading/Data Kosong (Opsional, tapi disarankan)
+    if (reports.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Daftar Laporan (The Monitor)')),
+        body: const Center(child: Text('Belum ada laporan. Coba buat laporan baru.')),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard & Laporan'),
@@ -30,7 +39,7 @@ class DashboardScreen extends StatelessWidget {
             ),
 
 
-            const SummaryCardWidget(),
+            SummaryCardWidget(), // HAPUS 'const' di sini
             const Divider(height: 30, thickness: 1),
             const Padding(
               padding: EdgeInsets.only(left: 16.0, top: 8.0, bottom: 8.0),
@@ -40,7 +49,7 @@ class DashboardScreen extends StatelessWidget {
               ),
             ),
             // Menggunakan ReportListView (ConsumerWidget) (Tugas 3.2)
-            const ReportListView(),
+            ReportListView(), // HAPUS 'const' di sini (KRITIS)
           ],
         ),
       ),
@@ -57,6 +66,7 @@ class SummaryCardWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final List<ReportModel> reports = ref.watch(reportListProvider);
     final int totalReports = reports.length;
+    // Asumsi properti isCompleted ada di ReportModel
     final int completedReports = reports.where((r) => r.isCompleted == true).length;
 
     return Padding(
@@ -128,6 +138,8 @@ class ReportListView extends ConsumerWidget {
         final String statusText = isCompleted ? 'Selesai' : 'Pending';
 
         return ListTile(
+          // Tambahkan Key unik (Opsional, tapi disarankan untuk List dinamis)
+          key: ValueKey(report.id),
           leading: Container(
             width: 6,
             height: double.infinity,

@@ -59,7 +59,7 @@ class ReportListNotifier extends StateNotifier<List<ReportModel>> {
   Future<void> addReport(ReportModel report) async {
     final id = await DBHelper.instance.insertReport(report);
     final newReport = report.copyWith(id: id);
-    await Future.delayed(const Duration(seconds: 1));
+    // await Future.delayed(const Duration(seconds: 1));
     state = [...state, newReport];
     print('Laporan berhasil disimpan: ${newReport.title}');
   }
